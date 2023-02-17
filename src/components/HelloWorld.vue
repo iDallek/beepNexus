@@ -16,7 +16,16 @@
     </v-navigation-drawer>
 
     <v-main class="main">
-      <!--  -->
+      <div>
+        <h2>
+          Abastecer Dados
+        </h2>
+        <v-btn
+          class="fuel-btn"
+          icon="mdi-database-plus"
+        />
+
+      </div>
     </v-main>
   </v-app>
 </template>
@@ -24,7 +33,18 @@
 <style scoped>
 .main {
   background-color: #424242;
+  color: white;
 }
+
+.main div h2 {
+  margin: 50px;
+  display: inline-block
+}
+
+.main .fuel-btn {
+  display: inline-block;
+}
+
 </style>
 
 <script lang="ts">
