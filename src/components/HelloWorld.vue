@@ -17,14 +17,19 @@
 
     <v-main class="main">
       <div>
-        <h2>
-          Abastecer Dados
-        </h2>
         <v-btn
           class="fuel-btn"
-          icon="mdi-database-plus"
+          append-icon="mdi-database-plus"
+          @click="dialog=true"
+        >
+          Abastecer Dados
+        </v-btn>
+        <ReadSpreadsheetModal
+          v-model="dialog"
+          @close-dialog="
+            dialog = false;
+          "
         />
-
       </div>
     </v-main>
   </v-app>
@@ -35,20 +40,27 @@
   background-color: #424242;
   color: white;
 }
-
-.main div h2 {
-  margin: 50px;
-  display: inline-block
+.main div {
+  margin: 80px;
 }
 
 .main .fuel-btn {
-  display: inline-block;
+  color: #000;
 }
 
 </style>
 
 <script lang="ts">
+  import ReadSpreadsheetModal from '@/components/ReadSpreadsheetModal.vue'
+
   export default {
-    //
+    components: {
+      ReadSpreadsheetModal
+    },
+    data() {
+      return {
+        dialog: false
+      }
+    }
   }
 </script>
