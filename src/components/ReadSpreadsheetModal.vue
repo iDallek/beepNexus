@@ -15,7 +15,8 @@
             class="restartIcon"
           />
         </div>
-        <div class="draggableArea">
+        <FileDrop @upload="startUpload"/>
+        <!-- <div class="draggableArea">
           <v-icon
             icon="mdi-upload"
             size="35"
@@ -25,22 +26,31 @@
             Arraste e solte ou <span>Escolhe um arquivo</span> para enviar
           </p>
           <p class="extensionsInfo">XLSX or ODD</p>
-        </div>
+        </div> -->
         <v-btn color="error" @click="close">Close</v-btn>
       </div>
     </div>
   </v-dialog>
 </template>
 <script lang="ts">
+import FileDrop from '@/components/form/FileDrop.vue'
+
+function startUpload(files : File[]) : void {
+  files.map(file => console.log("Uploading", file))
+}
 
 export default {
   props: {
     dialog: Boolean,
   },
+  components: {
+    FileDrop
+  },
   methods: {
     close() {
       this.$emit("close-dialog")
-    }
+    },
+    startUpload
   }
 }
 </script>
@@ -82,7 +92,7 @@ export default {
     margin-left: auto;
   }
 
-  .draggableArea {
+  /* .draggableArea {
     background-color: transparent;
     height: 250px;
     margin: 30px 0;
@@ -110,6 +120,6 @@ export default {
   .draggableArea .extensionsInfo {
     color: rgba(255, 255, 255, 0.2);
     font-size: 0.9em;
-  }
+  } */
 
 </style>
