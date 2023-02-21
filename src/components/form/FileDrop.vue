@@ -4,55 +4,87 @@
     @dragover="dragover"
     @drop="drop"
   >
-    <input
-      type="file"
-      class="input"
-      id="dropFieldHandle"
-      ref="file"
-      @change="onChange"
-    />
-    <v-icon
-      icon="mdi-upload"
-      size="35"
-      class="uploadIcon"
-    />
-    <label for="dropFieldHandle">
-      <span class="infoText">
-        Arraste e solte ou <span>Escolhe um arquivo</span> para enviar
-      </span>
-    </label>
-    <span class="extensionsInfo">XLSX or ODD</span>
-    <div @dragleave="dragleave" class="dropPopup" />
+    <FileDropCases v-if="vueStore === 'Valid'" :content="contentToDrapAndDrop[vueStore]" :funcOnChange="onChange"  />
+    <FileDropCases v-else-if="vueStore === 'Invalid, only 1 file'" :content="contentToDrapAndDrop[vueStore]" :funcOnChange="onChange"  />
+    <FileDropCases v-else-if="vueStore === 'Invalid, file extentesion is not XLSX or ODD'" :content="contentToDrapAndDrop[vueStore]" :funcOnChange="onChange"  />
+    <div>
+      <input
+        type="file"
+        class="input"
+        id="dropFieldHandle"
+        ref="file"
+        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        @change="onChange"
+      />
+      <v-icon
+        size="35"
+        class="uploadIcon"
+      >
+        {{ this.contentToDrapAndDrop[vueStore]?.iconId || 'mdi-upload'  }}
+      </v-icon>
+      <label for="dropFieldHandle">
+        <span class="infoText">
+          Arraste e solte ou <span>Escolhe um arquivo</span> para enviar
+        </span>
+      </label>
+      <span class="extensionsInfo">XLSX or ODD</span>
+      <div @dragleave="dragleave" class="dropPopup" />
+    </div>
   </div>
 </template>
 <script lang="ts">
-// const statusDragAndDropArea =
+let vueStore = ''
 
-function validationDragoverFile (event: any, element: any) {
+const contentToDrapAndDrop = {
+  "Valid": {
+    iconId: "mdi-upload",
+    text: "Solte para enviar"
+  },
+  "Invalid, only 1 file": {
+    iconId: "mdi-close",
+    text: "Arraste apenas 1 arquivo"
+  },
+  "Invalid, file extentesion is not XLSX or ODD": {
+    iconId: "mdi-close",
+    text: "Extensão do arquivo incompatível"
+  }
+}
+
+function validationDragoverFile (event: any, element: any, t: any) {
   const propsToValidate = {
     quantityFiles: event.dataTransfer.items.length,
     type: event.dataTransfer.items[0].type
   }
 
+  
   const validCases = {
-    "Valid": (el: Element): void => {
-      el.classList.remove('bgRed')
-      el.classList.add('bgBlue')
+    "Valid": ({element, validation}: any): void => {
+      element.classList.remove('bgRed')
+      element.classList.add('bgBlue')
+      
+      setDragCase(validation)
+      //console.log(vueStore)
     },
-    "Invalid, only 1 file": (el: Element): void => {
-      el.classList.remove('bgBlue')
-      el.classList.add('bgRed')
+    "Invalid, only 1 file": ({element, validation}: any): void => {
+      element.classList.remove('bgBlue')
+      element.classList.add('bgRed')
+      
+      setDragCase(validation)
+      //console.log(vueStore)
     },
-    "Invalid, file extentesion is not XLSX or ODD": (el: Element): void => {
-      el.classList.remove('bgBlue')
-      el.classList.add('bgRed')
+    "Invalid, file extentesion is not XLSX or ODD": ({element, validation}: any): void => {
+      element.classList.remove('bgBlue')
+      element.classList.add('bgRed')
+      
+      setDragCase(validation)
+      //console.log(vueStore)
     }
   }
-
+  
   const validType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-
+  
   let validation
-
+  
   if (propsToValidate.quantityFiles !== 1) {
     validation = "Invalid, only 1 file"
   } else if (propsToValidate.type !== validType) {
@@ -60,29 +92,23 @@ function validationDragoverFile (event: any, element: any) {
   } else {
     validation = "Valid"
   }
-
-  validCases[validation as keyof Object](element)
+  
+  validCases[validation as keyof Object]({ element, validation } as unknown as PropertyKey)
+  t.vueStore = vueStore
 }
 
 function dragover(event : any) : void {
   event.preventDefault()
   const element = this.$el.querySelector(".dropPopup")
 
-  const validationResult = validationDragoverFile(event, element)
-
-  // if (validationResult === "Valid") {
-  //   this.$el.querySelector(".dropPopup").classList.remove('bgRed')
-  //   this.$el.querySelector(".dropPopup").classList.add('bgBlue')
-  // } else {
-  //   this.$el.querySelector(".dropPopup").classList.remove('bgBlue')
-  //   this.$el.querySelector(".dropPopup").classList.add('bgRed')
-  // }
+  validationDragoverFile(event, element, this)
 
   this.$el.querySelector(".dropPopup").style.setProperty('display', 'block')
 }
 
 function dragleave() : void {
   this.$el.querySelector(".dropPopup").style.setProperty('display', 'none')
+  this.vueStore = ''
 }
 
 function drop(event : any) : void {
@@ -101,12 +127,33 @@ function onChange(e: any, isManual?: string) : void {
   console.log("Click", this.$refs.file.files)
 }
 
+function setDragCase(dragCase: string): void {
+  vueStore = dragCase
+}
+
+function getDragCase(): any {
+  return vueStore
+}
+
+import FileDropCases from '@/components/form/FileDropCases.vue'
+
 export default {
+  data() {
+    return {
+      vueStore,
+      contentToDrapAndDrop
+    }
+  },
   methods: {
     dragover,
     dragleave,
     drop,
-    onChange
+    onChange,
+    setDragCase,
+    getDragCase
+  },
+  components: {
+    FileDropCases
   }
 }
 </script>
@@ -134,9 +181,9 @@ export default {
 
   .dropArea .uploadIcon {
     margin-top: 55px;
-    background-color: transparent;
+    /* background-color: transparent; */
     display: inline-block;
-    color: rgba(255, 255, 255, 0.2);
+    color: rgb(83, 83, 83);
   }
 
   .dropArea .infoText {
