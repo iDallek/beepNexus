@@ -26,24 +26,62 @@
   </div>
 </template>
 <script lang="ts">
+// const statusDragAndDropArea =
+
+function validationDragoverFile (event: any, element: any) {
+  const propsToValidate = {
+    quantityFiles: event.dataTransfer.items.length,
+    type: event.dataTransfer.items[0].type
+  }
+
+  const validCases = {
+    "Valid": (el: Element): void => {
+      el.classList.remove('bgRed')
+      el.classList.add('bgBlue')
+    },
+    "Invalid, only 1 file": (el: Element): void => {
+      el.classList.remove('bgBlue')
+      el.classList.add('bgRed')
+    },
+    "Invalid, file extentesion is not XLSX or ODD": (el: Element): void => {
+      el.classList.remove('bgBlue')
+      el.classList.add('bgRed')
+    }
+  }
+
+  const validType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+  let validation
+
+  if (propsToValidate.quantityFiles !== 1) {
+    validation = "Invalid, only 1 file"
+  } else if (propsToValidate.type !== validType) {
+    validation = "Invalid, file extentesion is not XLSX or ODD"
+  } else {
+    validation = "Valid"
+  }
+
+  validCases[validation as keyof Object](element)
+}
 
 function dragover(event : any) : void {
   event.preventDefault()
+  const element = this.$el.querySelector(".dropPopup")
 
-  const types = event.dataTransfer.items.length
-  types != 1 ? console.log("Erro: Mova apenas 1 arquivo por vez.") :
-  console.log("Jogar")
+  const validationResult = validationDragoverFile(event, element)
+
+  // if (validationResult === "Valid") {
+  //   this.$el.querySelector(".dropPopup").classList.remove('bgRed')
+  //   this.$el.querySelector(".dropPopup").classList.add('bgBlue')
+  // } else {
+  //   this.$el.querySelector(".dropPopup").classList.remove('bgBlue')
+  //   this.$el.querySelector(".dropPopup").classList.add('bgRed')
+  // }
 
   this.$el.querySelector(".dropPopup").style.setProperty('display', 'block')
-
-  // if (!event.currentTarget.classList.contains('bgBlue')) {
-  //   event.currentTarget.classList.add('bgBlue')
-  // }
 }
 
-function dragleave(event : any) : void {
-  // console.log('saiu')
-
+function dragleave() : void {
   this.$el.querySelector(".dropPopup").style.setProperty('display', 'none')
 }
 
@@ -54,7 +92,7 @@ function drop(event : any) : void {
   // 1# Refatorar
   onChange(event, 'manual')
 
-  event.currentTarget.classList.remove('bgBlue')
+  this.$el.querySelector(".dropPopup").style.setProperty('display', 'none')
 }
 
 function onChange(e: any, isManual?: string) : void {
@@ -123,7 +161,7 @@ export default {
     width: 100%;
     top: 0;
     left: 0;
-    background-color: rgba(0, 153, 255, 0.05);
+    /* background-color: rgba(0, 153, 255, 0.05); */
     height: 100%;
     border-radius: 10px;
     z-index: 20;
@@ -131,6 +169,10 @@ export default {
 
   .bgBlue {
     background-color: rgba(0, 153, 255, 0.05);
+  }
+
+  .bgRed {
+    background-color: rgba(255, 0, 0, 0.05);
   }
 
 </style>
