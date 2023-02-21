@@ -13,6 +13,7 @@
           <v-icon
             icon="mdi-close"
             class="restartIcon"
+            @click="close"
           />
         </div>
         <FileDrop @upload="startUpload"/>

@@ -63,21 +63,18 @@ function validationDragoverFile (event: any, element: any, t: any) {
       element.classList.add('bgBlue')
       
       setDragCase(validation)
-      //console.log(vueStore)
     },
     "Invalid, only 1 file": ({element, validation}: any): void => {
       element.classList.remove('bgBlue')
       element.classList.add('bgRed')
       
       setDragCase(validation)
-      //console.log(vueStore)
     },
     "Invalid, file extentesion is not XLSX or ODD": ({element, validation}: any): void => {
       element.classList.remove('bgBlue')
       element.classList.add('bgRed')
       
       setDragCase(validation)
-      //console.log(vueStore)
     }
   }
   
@@ -113,15 +110,15 @@ function dragleave() : void {
 
 function drop(event : any) : void {
   event.preventDefault()
-
   this.$refs.file.files = event.dataTransfer.files
-  // 1# Refatorar
-  onChange(event, 'manual')
 
+  // 1# Refatorar
   this.$el.querySelector(".dropPopup").style.setProperty('display', 'none')
+  this.vueStore = ''
 }
 
 function onChange(e: any, isManual?: string) : void {
+
   // 1# Refatorar
   isManual ? console.log("Drop", e.dataTransfer?.files) :
   console.log("Click", this.$refs.file.files)
