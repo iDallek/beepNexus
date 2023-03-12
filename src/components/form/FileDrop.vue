@@ -106,6 +106,7 @@ function dragover(event : any) : void {
 function dragleave() : void {
   this.$el.querySelector(".dropPopup").style.setProperty('display', 'none')
   this.vueStore = ''
+  setDragCase('')
 }
 
 function drop(event : any) : void {
@@ -114,7 +115,7 @@ function drop(event : any) : void {
 
   // 1# Refatorar
   this.$el.querySelector(".dropPopup").style.setProperty('display', 'none')
-  this.vueStore = ''
+  setDragCase('')
 }
 
 function onChange(e: any, isManual?: string) : void {
