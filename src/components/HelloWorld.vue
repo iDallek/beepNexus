@@ -14,7 +14,6 @@
         class="d-block text-center mx-auto mb-9"
       ></v-avatar>
     </v-navigation-drawer>
-
     <v-main class="main">
       <div>
         <v-btn

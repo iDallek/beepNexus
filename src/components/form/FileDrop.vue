@@ -78,17 +78,29 @@ function validationDragoverFile (event: any, element: any, t: any) {
     }
   }
   
-  const validType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  const acceptExtensionsTypes = [
+    "application/vnd.oasis.opendocument.spreadsheet",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  ]
   
   let validation
   
-  if (propsToValidate.quantityFiles !== 1) {
-    validation = "Invalid, only 1 file"
-  } else if (propsToValidate.type !== validType) {
-    validation = "Invalid, file extentesion is not XLSX or ODD"
-  } else {
-    validation = "Valid"
-  }
+  let shouldSkip = false;
+  acceptExtensionsTypes.forEach((validType, index, array) => {
+
+    if (shouldSkip) {
+      return
+    }
+
+    if (propsToValidate.quantityFiles !== 1) {
+      validation = "Invalid, only 1 file"
+    } else if (propsToValidate.type !== validType) {
+      validation = "Invalid, file extentesion is not XLSX or ODD"
+    } else {
+      validation = "Valid"
+      shouldSkip = true
+    }
+  })
   
   validCases[validation as keyof Object]({ element, validation } as unknown as PropertyKey)
   t.vueStore = vueStore
@@ -111,6 +123,8 @@ function dragleave() : void {
 function drop(event : any) : void {
   event.preventDefault()
   this.$refs.file.files = event.dataTransfer.files
+
+  onChange(event, "Manual")
 
   // 1# Refatorar
   this.$el.querySelector(".dropPopup").style.setProperty('display', 'none')
