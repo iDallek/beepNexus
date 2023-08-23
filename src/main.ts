@@ -12,6 +12,7 @@ import { createApp } from 'vue'
 
 // Plugins
 import { registerPlugins } from '@/plugins'
+import { read, utils } from "xlsx";
 
 const app = createApp(App)
 

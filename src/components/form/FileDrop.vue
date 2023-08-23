@@ -137,17 +137,17 @@ async function onChange(e: any, isManual?: string) : Promise<void> {
     const f = e.dataTransfer?.files[0]
     const data = await f.arrayBuffer()
 
-    console.log("Drop", data)
+    console.log(data)
+    const wb = read(data)
+
+    console.log("Drop", utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]))
+
   } else {
     const f = this.$refs.file.files[0]
     const data = await f.arrayBuffer()
 
     console.log("Click", data)
   }
-
-  // 1# Refatorar
-  // isManual ? console.log("Drop", e.dataTransfer?.files) :
-  // console.log("Click", this.$refs.file.files)
 }
 
 function setDragCase(dragCase: string): void {
@@ -159,6 +159,7 @@ function getDragCase(): any {
 }
 
 import FileDropCases from '@/components/form/FileDropCases.vue'
+import { read, utils } from 'xlsx'
 
 export default {
   data() {
