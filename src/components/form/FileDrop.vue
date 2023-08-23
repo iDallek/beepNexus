@@ -131,11 +131,22 @@ function drop(event : any) : void {
   this.vueStore = ''
 }
 
-function onChange(e: any, isManual?: string) : void {
+async function onChange(e: any, isManual?: string) : Promise<void> {
+  if (isManual) {
+    const f = e.dataTransfer?.files[0]
+    const data = await f.arrayBuffer()
+
+    console.log("Drop", data)
+  } else {
+    const f = this.$refs.file.files[0]
+    const data = await f.arrayBuffer()
+
+    console.log("Click", data)
+  }
 
   // 1# Refatorar
-  isManual ? console.log("Drop", e.dataTransfer?.files) :
-  console.log("Click", this.$refs.file.files)
+  // isManual ? console.log("Drop", e.dataTransfer?.files) :
+  // console.log("Click", this.$refs.file.files)
 }
 
 function setDragCase(dragCase: string): void {
