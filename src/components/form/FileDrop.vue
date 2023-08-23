@@ -102,7 +102,7 @@ function validationDragoverFile (event: any, element: any, t: any) {
     }
   })
   
-  validCases[validation as keyof Object]({ element, validation } as unknown as PropertyKey)
+  validCases[validation as unknown as keyof Object]({ element, validation } as unknown as PropertyKey)
   t.vueStore = vueStore
 }
 
